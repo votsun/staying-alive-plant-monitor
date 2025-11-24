@@ -1,1 +1,1 @@
-# staying-alive-project
+# Staying Alive Plant Monitor
