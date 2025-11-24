@@ -4,7 +4,7 @@ const int SOIL_PIN = 32;   // soil sensor signal pin
 const int LED_PIN  = 2;  // led pin
 
 // start with a guess and then tune this based on serial output
-int DRY_THRESHOLD = 2000;   // calls it dry if reading is lower than this
+int DRY_THRESHOLD = 3000;   // calls it dry if reading is lower than this
 
 void setup() {
   Serial.begin(115200);   // open serial for debugging
