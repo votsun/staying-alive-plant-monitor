@@ -132,16 +132,23 @@ static int soilPercentFromRaw(int raw) {
 static bool sendTelemetryToAzure(int raw, int moisturePct, bool isDry) {
   if (WiFi.status() != WL_CONNECTED) return false;
 
-  // Build JSON payload
-  StaticJsonDocument<256> doc;
-  doc["soil_raw"] = raw;
-  doc["soil_moisture_pct"] = moisturePct;
-  doc["is_dry"] = isDry;
-  doc["device"] = DEVICE_NAME;
+  // Build a human-friendly message so Cloud Shell / VS Code monitoring looks like a notification
+  // (Instead of dumping raw JSON).
+  // [ALERT] PLANT NEEDS WATER | moisture=18% | raw=2731
+  // [OK]    Plant OK          | moisture=55% | raw=2012
+  String msg;
+  if (isDry) {
+    msg = "[ALERT] PLANT NEEDS WATER | moisture=";
+  } else {
+    msg = "[OK] Plant OK | moisture=";
+  }
+  msg += String(moisturePct);
+  msg += "% | raw=";
+  msg += String(raw);
 
-  char payload[256];
-  size_t n = serializeJson(doc, payload, sizeof(payload));
-  if (n == 0) return false;
+  // Copy into a stable C buffer for HTTPClient
+  char payload[160];
+  msg.toCharArray(payload, sizeof(payload));
 
   WiFiClientSecure client;
   client.setCACert(ROOT_CA);
@@ -154,7 +161,7 @@ static bool sendTelemetryToAzure(int raw, int moisturePct, bool isDry) {
     return false;
   }
 
-  http.addHeader("Content-Type", "application/json");
+  http.addHeader("Content-Type", "text/plain");
   http.addHeader("Authorization", SAS_TOKEN);
 
   int httpCode = http.POST((uint8_t*)payload, strlen(payload));
@@ -164,7 +171,7 @@ static bool sendTelemetryToAzure(int raw, int moisturePct, bool isDry) {
 
   if (ok) {
     Serial.print("Telemetry sent: ");
-    Serial.println(payload);
+    Serial.println(msg);
   } else {
     Serial.print("Telemetry failed. HTTP code: ");
     Serial.println(httpCode);
