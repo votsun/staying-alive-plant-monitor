@@ -4,64 +4,27 @@
 #include <WiFiClientSecure.h>
 #include <ArduinoJson.h>
 
-// =========================
 // Wi‑Fi credentials
-// =========================
-#define WIFI_SSID     "vathsans iphone"
-#define WIFI_PASSWORD "doughnuts"
+#define WIFI_SSID     "[Input your own WiFi SSID]"
+#define WIFI_PASSWORD "[Input your own WiFi password]"
 
-// =========================
 // Azure IoT Hub configuration (HTTPS)
-// =========================
-// Example URL format:
-// https://<IOTHUB_NAME>.azure-devices.net/devices/<DEVICE_NAME>/messages/events?api-version=2021-04-12
-#define IOTHUB_NAME   "cs147-group1-StayingAliveProject-IotHub"
-#define DEVICE_NAME   "147esp32"
+#define IOTHUB_NAME   "[Input your own IoT Hub Name]"
+#define DEVICE_NAME   "[Input your own device name]"
 #define API_VERSION   "2021-04-12"
 
-// SAS token must match the device + hub, and should be regenerated before it expires.
-// IMPORTANT: keep the entire string intact.
-#define SAS_TOKEN "SharedAccessSignature sr=cs147-group1-StayingAliveProject-IotHub.azure-devices.net%2Fdevices%2F147esp32&sig=lK0Y2WymG5VCZ%2BgUvyaCtk33%2FRcR%2F6Aytze4Up%2BcTzY%3D&se=1765590043"
+#define SAS_TOKEN "[Input your own token]"
 
 // Root CA certificate for Azure IoT Hub TLS
-// (same idea as your Lab 4: the cert chain used by Azure)
 static const char *ROOT_CA = R"(-----BEGIN CERTIFICATE-----
-MIIEtjCCA56gAwIBAgIQCv1eRG9c89YADp5Gwibf9jANBgkqhkiG9w0BAQsFADBh
-MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
-d3cuZGlnaWNlcnQuY29tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBH
-MjAeFw0yMjA0MjgwMDAwMDBaFw0zMjA0MjcyMzU5NTlaMEcxCzAJBgNVBAYTAlVT
-MR4wHAYDVQQKExVNaWNyb3NvZnQgQ29ycG9yYXRpb24xGDAWBgNVBAMTD01TRlQg
-UlMyNTYgQ0EtMTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMiJV34o
-eVNHI0mZGh1Rj9mdde3zSY7IhQNqAmRaTzOeRye8QsfhYFXSiMW25JddlcqaqGJ9
-GEMcJPWBIBIEdNVYl1bB5KQOl+3m68p59Pu7npC74lJRY8F+p8PLKZAJjSkDD9Ex
-mjHBlPcRrasgflPom3D0XB++nB1y+WLn+cB7DWLoj6qZSUDyWwnEDkkjfKee6ybx
-SAXq7oORPe9o2BKfgi7dTKlOd7eKhotw96yIgMx7yigE3Q3ARS8m+BOFZ/mx150g
-dKFfMcDNvSkCpxjVWnk//icrrmmEsn2xJbEuDCvtoSNvGIuCXxqhTM352HGfO2JK
-AF/Kjf5OrPn2QpECAwEAAaOCAYIwggF+MBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYD
-VR0OBBYEFAyBfpQ5X8d3on8XFnk46DWWjn+UMB8GA1UdIwQYMBaAFE4iVCAYlebj
-buYP+vq5Eu0GF485MA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcD
-AQYIKwYBBQUHAwIwdgYIKwYBBQUHAQEEajBoMCQGCCsGAQUFBzABhhhodHRwOi8v
-b2NzcC5kaWdpY2VydC5jb20wQAYIKwYBBQUHMAKGNGh0dHA6Ly9jYWNlcnRzLmRp
-Z2ljZXJ0LmNvbS9EaWdpQ2VydEdsb2JhbFJvb3RHMi5jcnQwQgYDVR0fBDswOTA3
-oDWgM4YxaHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0R2xvYmFsUm9v
-dEcyLmNybDA9BgNVHSAENjA0MAsGCWCGSAGG/WwCATAHBgVngQwBATAIBgZngQwB
-AgEwCAYGZ4EMAQICMAgGBmeBDAECAzANBgkqhkiG9w0BAQsFAAOCAQEAdYWmf+AB
-klEQShTbhGPQmH1c9BfnEgUFMJsNpzo9dvRj1Uek+L9WfI3kBQn97oUtf25BQsfc
-kIIvTlE3WhA2Cg2yWLTVjH0Ny03dGsqoFYIypnuAwhOWUPHAu++vaUMcPUTUpQCb
-eC1h4YW4CCSTYN37D2Q555wxnni0elPj9O0pymWS8gZnsfoKjvoYi/qDPZw1/TSR
-penOgI6XjmlmPLBrk4LIw7P7PPg4uXUpCzzeybvARG/NIIkFv1eRYIbDF+bIkZbJ
-QFdB9BjjlA4ukAg2YkOyCiB8eXTBi2APaceh3+uBLIgLk8ysy52g2U3gP7Q26Jlg
-q/xKzj3O9hFh/g==
+Input your own Root CA certificate
 -----END CERTIFICATE-----
 )";
 
-// =========================
 // Plant monitor pins + tuning
-// =========================
 static const int SOIL_PIN = 32;  // ADC pin for soil sensor
 static const int LED_PIN  = 2;   // on-board LED or external LED
 
-// Calibrate these two values using Serial output:
 // - DRY_RAW: sensor reading in air / very dry soil
 // - WET_RAW: sensor reading in water / fully wet soil
 // Then the code will map raw -> percent.
@@ -121,7 +84,6 @@ static int clampInt(int v, int lo, int hi) {
 
 static int soilPercentFromRaw(int raw) {
   // Map raw -> percent where WET_RAW = 100% and DRY_RAW = 0%
-  // If your sensor behaves opposite, swap DRY_RAW and WET_RAW.
   long denom = (long)DRY_RAW - (long)WET_RAW;
   if (denom == 0) return 0;
 
@@ -132,8 +94,7 @@ static int soilPercentFromRaw(int raw) {
 static bool sendTelemetryToAzure(int raw, int moisturePct, bool isDry) {
   if (WiFi.status() != WL_CONNECTED) return false;
 
-  // Build a human-friendly message so Cloud Shell / VS Code monitoring looks like a notification
-  // (Instead of dumping raw JSON).
+  // Examples:
   // [ALERT] PLANT NEEDS WATER | moisture=18% | raw=2731
   // [OK]    Plant OK          | moisture=55% | raw=2012
   String msg;
@@ -192,9 +153,6 @@ void setup() {
 
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
-
-  // On ESP32, setting ADC resolution/attenuation is optional, but helpful.
-  // Defaults usually work, so leaving it simple.
 
   Serial.println("Plant monitor starting...");
   Serial.println("Calibrate DRY_RAW / WET_RAW using Serial output if needed.");
