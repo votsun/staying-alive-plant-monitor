@@ -21,7 +21,7 @@
 
 // SAS token must match the device + hub, and should be regenerated before it expires.
 // IMPORTANT: keep the entire string intact.
-#define SAS_TOKEN "SharedAccessSignature sr=cs147-group1-StayingAliveProject-IotHub.azure-devices.net%2Fdevices%2F147esp32&sig=OUKHCAOZYsNyNDen6YqmOX8tyac1AtbY2l7xXYVosrM%3D&se=1765582087"
+#define SAS_TOKEN "SharedAccessSignature sr=cs147-group1-StayingAliveProject-IotHub.azure-devices.net%2Fdevices%2F147esp32&sig=lK0Y2WymG5VCZ%2BgUvyaCtk33%2FRcR%2F6Aytze4Up%2BcTzY%3D&se=1765590043"
 
 // Root CA certificate for Azure IoT Hub TLS
 // (same idea as your Lab 4: the cert chain used by Azure)

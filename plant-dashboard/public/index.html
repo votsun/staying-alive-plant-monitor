@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Plant Monitor</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; padding: 24px; max-width: 720px; margin: 0 auto; }
+    .card { border: 1px solid #e5e7eb; border-radius: 14px; padding: 18px; }
+    .badge { display:inline-block; padding:10px 14px; border-radius:999px; font-weight:800; }
+    .ok { background:#e7f7ee; color:#0f5132; }
+    .alert { background:#ffe8e8; color:#842029; }
+    .muted { color:#6b7280; }
+    .big { font-size: 34px; margin: 12px 0 8px; font-weight: 800; }
+    .row { display:flex; gap:16px; flex-wrap:wrap; margin-top: 10px; }
+    .stat { border:1px solid #f1f5f9; border-radius:12px; padding:12px 14px; min-width: 190px; }
+  </style>
+</head>
+<body>
+  <h1>Plant Monitor</h1>
+
+  <div class="card">
+    <div id="badge" class="badge muted">Waiting…</div>
+    <div id="headline" class="big">No data yet</div>
+
+    <div class="row">
+      <div class="stat"><div class="muted">Moisture</div><div id="moisture" style="font-size:24px;font-weight:800">—</div></div>
+      <div class="stat"><div class="muted">Raw ADC</div><div id="raw" style="font-size:24px;font-weight:800">—</div></div>
+      <div class="stat"><div class="muted">Last updated</div><div id="updated" style="font-size:16px;font-weight:700">—</div></div>
+    </div>
+
+    <p class="muted" id="message" style="margin-top:14px"></p>
+  </div>
+
+  <script>
+    const ws = new WebSocket(`ws://${location.host}`);
+    let lastState = null;
+
+    ws.onmessage = (e) => {
+      const d = JSON.parse(e.data);
+
+      const isDry = !!d.is_dry;
+      const moisture = d.soil_moisture_pct;
+      const raw = d.soil_raw;
+
+      document.getElementById("moisture").textContent = moisture == null ? "—" : `${moisture}%`;
+      document.getElementById("raw").textContent = raw == null ? "—" : raw;
+      document.getElementById("updated").textContent = d.timestamp ? new Date(d.timestamp).toLocaleString() : "—";
+      document.getElementById("message").textContent = d.message ?? "";
+
+      const badge = document.getElementById("badge");
+      const headline = document.getElementById("headline");
+
+      if (isDry) {
+        badge.className = "badge alert";
+        badge.textContent = "ALERT";
+        headline.textContent = "Plant needs water";
+      } else {
+        badge.className = "badge ok";
+        badge.textContent = "OK";
+        headline.textContent = "Plant is fine";
+      }
+
+      // browser notification on transition to ALERT
+      if (lastState === false && isDry) {
+        if ("Notification" in window && Notification.permission === "granted") {
+          new Notification("Plant needs water", { body: `Moisture is ${moisture}%` });
+        }
+      }
+      lastState = isDry;
+    };
+
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+  </script>
+</body>
+</html>
