@@ -2,10 +2,10 @@
 
 **Course:** Internet of Things (CS 147)  
 **Team:** Pineapple Water Company  
-**Team Member:** Srivathsan Sankaranarayanan
+**Team Member:** Vathsan Sankaranarayanan
 **Team Member:** Amratha Rao
 
-Staying Alive is a low-cost IoT plant monitor that measures soil moisture using an ESP32 + capacitive soil moisture sensor. When the plant is too dry, the device triggers a local LED alert and publishes a human-friendly “OK / NEEDS WATER” message to Azure IoT Hub so the user can view status remotely.
+Staying Alive is a low-cost IoT plant monitor that measures soil moisture using an ESP32 + capacitive soil moisture sensor. When the plant is too dry, the device triggers a local LED alert and publishes a human-friendly “OK / NEEDS WATER” message to Azure IoT Hub so the user can view the status remotely.
 
 ---
 
@@ -19,7 +19,7 @@ Many students struggle to keep plants healthy because it’s easy to forget when
 
 ### Motivation / Background
 
-Plant care is simple in theory, but in practice it’s easy to overwater or neglect a plant, especially with a busy student schedule. A moisture-based reminder system reduces guesswork: it checks soil conditions continuously and tells the user when watering is actually needed.
+Plant care is simple in theory, but in practice, it’s easy to overwater or neglect a plant, especially with a busy student schedule. A moisture-based reminder system reduces guesswork: it checks soil conditions continuously and tells the user when watering is actually needed.
 
 ### Project Goals
 
